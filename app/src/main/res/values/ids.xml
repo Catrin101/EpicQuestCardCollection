@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tvWelcome" type="id" />
+    <item name="btnContinue" type="id" />
+    <item name="btnObtainCards" type="id" />
+</resources>

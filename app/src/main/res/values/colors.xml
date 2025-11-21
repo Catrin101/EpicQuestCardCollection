@@ -1,0 +1,17 @@
+<resources>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="red_200">#FFCDD2</color>
+    <color name="gray_600">#757575</color>
+
+    <!-- Colores para rarezas de cartas -->
+    <color name="common_color">#9E9E9E</color>      <!-- Gris -->
+    <color name="uncommon_color">#4CAF50</color>    <!-- Verde -->
+    <color name="rare_color">#2196F3</color>        <!-- Azul -->
+    <color name="epic_color">#9C27B0</color>        <!-- Púrpura -->
+    <color name="legendary_color">#FFD700</color>   <!-- Dorado -->
+</resources>
