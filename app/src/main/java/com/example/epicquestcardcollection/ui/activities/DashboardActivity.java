@@ -23,14 +23,15 @@ public class DashboardActivity extends BaseActivity {
     private static final String TAG = "DashboardActivity";
 
     private TextView tvWelcome;
-    private Button btnObtainCards;
-    private Button btnMyCollection;
-    private Button btnStats;
-    private Button btnSettings;
+    private com.google.android.material.card.MaterialCardView btnObtainCards;
+    private com.google.android.material.card.MaterialCardView btnMyCollection;
+    private com.google.android.material.card.MaterialCardView btnStats;
+    private com.google.android.material.card.MaterialCardView btnSettings;
     private Button btnLogout;
 
     private UserRepository userRepository;
     private User currentUser;
+    private boolean isBackPressedOnce = false;
 
     @Override
     protected int getLayoutRes() {
@@ -46,8 +47,15 @@ public class DashboardActivity extends BaseActivity {
             getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
                 @Override
                 public void handleOnBackPressed() {
+                    if (isBackPressedOnce) {
+                        finishAffinity();
+                        return;
+                    }
+
+                    isBackPressedOnce = true;
                     showToast("Presiona nuevamente para salir");
-                    finish();
+
+                    new android.os.Handler().postDelayed(() -> isBackPressedOnce = false, 2000);
                 }
             });
 
@@ -130,7 +138,6 @@ public class DashboardActivity extends BaseActivity {
             Log.d(TAG, "Navegando a CardObtainActivity");
             Intent intent = new Intent(this, CardObtainActivity.class);
             startActivity(intent);
-            finish();
         } catch (Exception e) {
             Log.e(TAG, "Error navegando a CardObtainActivity: ", e);
             e.printStackTrace();
@@ -143,7 +150,6 @@ public class DashboardActivity extends BaseActivity {
             Log.d(TAG, "Navegando a CardCollectionActivity");
             Intent intent = new Intent(this, CardCollectionActivity.class);
             startActivity(intent);
-            finish();
         } catch (Exception e) {
             Log.e(TAG, "Error navegando a CardCollectionActivity: ", e);
             e.printStackTrace();

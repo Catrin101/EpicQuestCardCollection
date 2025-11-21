@@ -26,6 +26,8 @@ public interface UserRepository {
 
     /**
      * Obtiene el usuario actualmente logueado
+     * @return El usuario actual o null si no hay sesión
+     * @apiNote Se recomienda validar el resultado para evitar NullPointerExceptions.
      */
     User getCurrentUser();
 

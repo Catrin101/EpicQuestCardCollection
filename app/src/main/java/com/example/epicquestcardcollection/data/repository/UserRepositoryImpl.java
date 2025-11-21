@@ -74,6 +74,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
 
         // Verificar contraseña (en producción esto sería un hash)
+        // TODO: Implementar hashing de contraseñas para mejorar la seguridad.
         if (!user.getPassword().equals(password)) {
             return new OperationResult(false, "Contraseña incorrecta");
         }
