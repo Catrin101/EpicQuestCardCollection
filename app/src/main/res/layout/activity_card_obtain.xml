@@ -3,44 +3,69 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/purple_500">
+    android:background="@drawable/bg_gradient_primary">
 
     <!-- Contenido principal -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottom_navigation"
-        android:padding="16dp">
+        android:layout_above="@id/bottom_navigation">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <!-- Header -->
-            <TextView
+            <!-- Header Hero -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_height="120dp"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:text="Obtener Cartas"
-                android:textColor="@color/white"
-                android:textSize="28sp"
-                android:textStyle="bold" />
+                android:background="@drawable/btn_primary_gradient"
+                android:padding="16dp"
+                android:layout_marginBottom="24dp"
+                android:layout_marginStart="-16dp"
+                android:layout_marginEnd="-16dp"
+                android:layout_marginTop="-16dp">
 
-            <!-- Información de estado -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Obtener Cartas"
+                    android:textColor="@color/white"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.02" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Recibe tu carta diaria"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:alpha="0.85"
+                    android:layout_marginTop="4dp" />
+
+            </LinearLayout>
+
+            <!-- Card de oportunidades -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/bg_card">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="24dp">
 
                     <TextView
                         android:id="@+id/tvOpportunities"
@@ -48,9 +73,18 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Oportunidades: 5/5"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
                         android:textStyle="bold" />
+
+                    <ProgressBar
+                        android:id="@+id/progressOpportunities"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="12dp"
+                        android:progress="100"
+                        android:max="5"
+                        style="@android:style/Widget.ProgressBar.Horizontal" />
 
                     <TextView
                         android:id="@+id/tvCooldown"
@@ -58,36 +92,40 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Siguiente oportunidad en: 00:00"
-                        android:textColor="@color/red_200"
+                        android:textColor="@color/error_red"
                         android:textSize="14sp"
+                        android:layout_marginTop="12dp"
                         android:visibility="gone" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Botón temporal para testing - ELIMINAR EN PRODUCCIÓN -->
+            <!-- Botón Reset (TEST) -->
             <Button
                 android:id="@+id/btnResetOpportunities"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginBottom="16dp"
-                android:backgroundTint="@color/red_200"
-                android:text="🔄 Resetear Oportunidades (TEST)"
+                android:background="@drawable/btn_secondary_gradient"
+                android:text="Resetear Oportunidades (TEST)"
                 android:textAllCaps="false"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:visibility="visible" />
 
             <!-- Botón para obtener carta -->
             <Button
                 android:id="@+id/btnObtainCard"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:layout_marginBottom="32dp"
-                android:background="@drawable/button_rounded"
+                android:background="@drawable/btn_primary_gradient"
                 android:text="Obtener Carta"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <!-- Contenedor de carta (inicialmente oculto) -->
             <com.google.android.material.card.MaterialCardView
@@ -95,8 +133,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp">
+                app:cardCornerRadius="20dp"
+                app:cardElevation="16dp"
+                app:cardBackgroundColor="@color/bg_card">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -104,15 +143,23 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
+                    <!-- Indicador de rareza colorido -->
+                    <View
+                        android:id="@+id/rarityStrip"
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@color/legendary_color" />
+
                     <!-- Imagen del héroe -->
                     <ImageView
                         android:id="@+id/ivHeroImage"
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="16dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="260dp"
+                        android:layout_marginBottom="20dp"
                         android:contentDescription="Imagen del héroe"
-                        android:scaleType="centerCrop" />
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/card_bg_default" />
 
                     <!-- Nombre y rareza -->
                     <TextView
@@ -121,9 +168,10 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Nombre del Héroe"
-                        android:textColor="@color/black"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/white"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
 
                     <TextView
                         android:id="@+id/tvHeroRarity"
@@ -131,33 +179,40 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Rareza: LEGENDARY"
-                        android:textColor="@color/purple_500"
+                        android:textColor="@color/legendary_color"
                         android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/surface_light"
+                        android:layout_marginBottom="16dp" />
 
                     <!-- Biografía -->
                     <TextView
                         android:id="@+id/tvHeroBiography"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
                         android:gravity="center"
                         android:text="Biografía del héroe..."
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:textSize="14sp"
-                        android:lineSpacingExtra="4dp" />
+                        android:lineSpacingExtra="4dp"
+                        android:layout_marginBottom="16dp" />
 
                     <!-- Estadísticas -->
                     <TextView
                         android:id="@+id/tvHeroStats"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
                         android:gravity="center"
                         android:text="Estadísticas..."
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:lineSpacingExtra="2dp" />
+                        android:textColor="@color/gray_600"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp" />
 
                 </LinearLayout>
 
@@ -173,7 +228,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/white"
+        android:background="@color/bg_card"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
         app:menu="@menu/bottom_navigation_menu" />
 
 </RelativeLayout>

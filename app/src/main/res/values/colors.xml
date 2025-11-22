@@ -1,17 +1,35 @@
 <resources>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="red_200">#FFCDD2</color>
-    <color name="gray_600">#757575</color>
+    <!-- Paleta Principal - Colores de Marca -->
+    <color name="purple_500">#FF7B2CBF</color>      <!-- Púrpura vibrante -->
+    <color name="purple_700">#FF5A189A</color>      <!-- Púrpura oscuro -->
+    <color name="teal_200">#FF00D9FF</color>        <!-- Cian eléctrico -->
+    <color name="teal_700">#FF0096C7</color>        <!-- Azul profundo -->
+    <color name="black">#FF0A0E27</color>           <!-- Negro oscuro casi azulado -->
+    <color name="white">#FFFFFFFF</color>          <!-- Blanco puro -->
+    <color name="red_200">#FFFF6B6B</color>         <!-- Rojo coral -->
+    <color name="gray_600">#FF757575</color>        <!-- Gris neutro -->
 
-    <!-- Colores para rarezas de cartas -->
-    <color name="common_color">#9E9E9E</color>      <!-- Gris -->
-    <color name="uncommon_color">#4CAF50</color>    <!-- Verde -->
-    <color name="rare_color">#2196F3</color>        <!-- Azul -->
-    <color name="epic_color">#9C27B0</color>        <!-- Púrpura -->
-    <color name="legendary_color">#FFD700</color>   <!-- Dorado -->
+    <!-- Colores Secundarios - Acentos Superhéroes -->
+    <color name="red_accent">#FFFF0000</color>      <!-- Rojo carmesí puro -->
+    <color name="blue_accent">#FF0066FF</color>     <!-- Azul eléctrico -->
+    <color name="yellow_accent">#FFFFB300</color>   <!-- Amarillo dorado -->
+    <color name="orange_accent">#FFFF6600</color>   <!-- Naranja fuego -->
+
+    <!-- Colores para Fondos -->
+    <color name="bg_dark">#FF0F1419</color>         <!-- Fondo muy oscuro -->
+    <color name="bg_card">#FF1A1E2E</color>         <!-- Fondo de tarjetas -->
+    <color name="surface_light">#FF2D3142</color>   <!-- Superficie clara -->
+
+    <!-- Colores para Rarezas de Cartas -->
+    <color name="common_color">#FF9E9E9E</color>        <!-- Gris -->
+    <color name="uncommon_color">#FF76FF03</color>      <!-- Verde lima vibrante -->
+    <color name="rare_color">#FF00E5FF</color>          <!-- Cian/Azul eléctrico -->
+    <color name="epic_color">#FFFF00FF</color>          <!-- Magenta neon -->
+    <color name="legendary_color">#FFFFDD00</color>     <!-- Oro brillante -->
+
+    <!-- Colores de Estados -->
+    <color name="success_green">#FF00E676</color>   <!-- Verde éxito -->
+    <color name="error_red">#FFFF1744</color>       <!-- Rojo error -->
+    <color name="warning_orange">#FFFFB74D</color>  <!-- Naranja advertencia -->
+    <color name="info_blue">#FF42A5F5</color>       <!-- Azul información -->
 </resources>

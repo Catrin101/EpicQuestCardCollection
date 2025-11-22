@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/purple_500">
+    android:background="@drawable/bg_gradient_primary">
 
     <!-- ViewPager para las pantallas de onboarding -->
     <androidx.viewpager2.widget.ViewPager2
@@ -29,11 +29,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="16dp"
-            app:dotsColor="@color/white"
-            app:dotsSize="8dp"
-            app:dotsSpacing="4dp"
-            app:dotsCornerRadius="4dp"
+            android:layout_marginBottom="24dp"
+            app:dotsColor="@color/surface_light"
+            app:dotsSize="10dp"
+            app:dotsSpacing="6dp"
+            app:dotsCornerRadius="5dp"
             tools:ignore="MissingClass" />
 
         <!-- Botones -->
@@ -41,31 +41,40 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:spacing="12dp">
 
             <!-- Botón Saltar -->
             <Button
                 android:id="@+id/btnSkip"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:background="@android:color/transparent"
+                android:layout_height="48dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:background="@drawable/btn_secondary_gradient"
                 android:text="@string/skip"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="14sp"
+                android:textStyle="bold"
                 android:visibility="visible" />
+
+            <!-- Espaciador -->
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="match_parent" />
 
             <!-- Botón Siguiente o Comenzar -->
             <Button
                 android:id="@+id/btnNext"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/button_rounded"
+                android:layout_height="48dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:background="@drawable/btn_primary_gradient"
                 android:text="@string/next"
                 android:textColor="@color/white"
-                android:textSize="16sp"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp" />
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

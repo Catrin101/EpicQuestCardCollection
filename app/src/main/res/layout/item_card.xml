@@ -4,37 +4,51 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp"
-    app:cardUseCompatPadding="true">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/bg_card"
+    app:rippleColor="@color/blue_accent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Indicador de rareza (barra superior) -->
+        <!-- Indicador de rareza (barra superior) - Dinámico según rareza -->
         <View
             android:id="@+id/rarityIndicator"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
+            android:layout_height="6dp"
             android:background="@color/common_color" />
 
-        <!-- Imagen de la carta -->
-        <ImageView
-            android:id="@+id/ivCardImage"
+        <!-- Contenedor de imagen con overlay -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="Imagen del héroe"
-            android:padding="8dp" />
+            android:layout_height="160dp">
+
+            <ImageView
+                android:id="@+id/ivCardImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Imagen del héroe"
+                android:padding="8dp" />
+
+            <!-- Overlay oscuro para mejor legibilidad -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/gradient_overlay_card" />
+
+        </FrameLayout>
 
         <!-- Información de la carta -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="16dp">
 
             <!-- Nombre del héroe -->
             <TextView
@@ -42,21 +56,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Nombre del Héroe"
-                android:textColor="@color/black"
-                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:maxLines="1"
-                android:ellipsize="end" />
+                android:ellipsize="end"
+                android:layout_marginBottom="6dp" />
 
-            <!-- Rareza -->
-            <TextView
-                android:id="@+id/tvCardRarity"
+            <!-- Rareza con color dinámico -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="COMMON"
-                android:textColor="@color/gray_600"
-                android:textSize="12sp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <View
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@color/rare_color"
+                    android:id="@+id/rarityDot" />
+
+                <TextView
+                    android:id="@+id/tvCardRarity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="COMMON"
+                    android:textColor="@color/gray_600"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:contentDescription="Insignia de rareza"
+                    app:tint="@color/rare_color"
+                    app:srcCompat="@android:drawable/ic_menu_info_details" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

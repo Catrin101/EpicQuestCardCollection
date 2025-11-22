@@ -6,17 +6,31 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="32dp"
-    android:background="@color/purple_500">
+    android:background="@drawable/bg_gradient_primary">
 
-    <!-- Icono de bienvenida -->
-    <ImageView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginBottom="40dp"
-        android:contentDescription="@string/welcome_image"
-        app:srcCompat="@drawable/ic_launcher_foreground" />
+    <!-- Icono de bienvenida con efecto -->
+    <FrameLayout
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginBottom="40dp">
 
-    <!-- Título de bienvenida -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/circle_accent_glow"
+            android:alpha="0.3" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/welcome_image"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ic_launcher_foreground"
+            app:tint="@color/yellow_accent" />
+
+    </FrameLayout>
+
+    <!-- Título con estilo -->
     <TextView
         android:id="@+id/tvWelcome"
         android:layout_width="match_parent"
@@ -24,9 +38,18 @@
         android:layout_marginBottom="16dp"
         android:gravity="center"
         android:text="@string/welcome_title"
-        android:textColor="@color/white"
-        android:textSize="32sp"
-        android:textStyle="bold" />
+        android:textColor="@color/yellow_accent"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.05" />
+
+    <!-- Línea decorativa -->
+    <View
+        android:layout_width="60dp"
+        android:layout_height="3dp"
+        android:layout_marginBottom="24dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/blue_accent" />
 
     <!-- Subtítulo -->
     <TextView
@@ -36,18 +59,21 @@
         android:gravity="center"
         android:text="@string/welcome_subtitle"
         android:textColor="@color/white"
-        android:textSize="18sp"
-        android:lineSpacingExtra="8dp" />
+        android:textSize="16sp"
+        android:lineSpacingExtra="6dp"
+        android:alpha="0.9" />
 
-    <!-- Botón Continuar -->
+    <!-- Botón Continuar mejorado -->
     <Button
         android:id="@+id/btnContinue"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_rounded"
+        android:layout_height="56dp"
+        android:background="@drawable/btn_primary_gradient"
         android:text="@string/continue_to_collection"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:stateListAnimator="@animator/btn_elevation" />
 
 </LinearLayout>
