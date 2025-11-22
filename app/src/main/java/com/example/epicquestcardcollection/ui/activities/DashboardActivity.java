@@ -13,6 +13,8 @@ import com.example.epicquestcardcollection.base.BaseActivity;
 import com.example.epicquestcardcollection.data.repository.UserRepository;
 import com.example.epicquestcardcollection.data.repository.UserRepositoryImpl;
 import com.example.epicquestcardcollection.model.User;
+import com.example.epicquestcardcollection.receivers.DailyReminderReceiver;
+import com.example.epicquestcardcollection.utils.AlarmHelper;
 
 /**
  * Actividad principal que sirve como dashboard/menú de la aplicación.
@@ -42,6 +44,9 @@ public class DashboardActivity extends BaseActivity {
     protected void initializeUI() {
         try {
             Log.d(TAG, "Iniciando inicialización de UI");
+
+            // Inicializar PermissionManager (simple)
+            initializePermissionManager();
 
             // Configurar OnBackPressedDispatcher
             getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -79,6 +84,12 @@ public class DashboardActivity extends BaseActivity {
             currentUser = userRepository.getCurrentUser();
 
             setupWelcomeMessage();
+
+            // SOLICITAR PERMISOS DE FORMA DIRECTA
+            requestMissingPermissions();
+            // PROGRAMAR RECORDATORIO DIARIO
+            scheduleDailyReminder();
+
             Log.d(TAG, "UI inicializada correctamente");
 
         } catch (Exception e) {
@@ -86,6 +97,36 @@ public class DashboardActivity extends BaseActivity {
             e.printStackTrace();
             finish();
         }
+    }
+
+    private void scheduleDailyReminder() {
+        try {
+            // Programar alarma diaria para las 9:00 AM
+            AlarmHelper.scheduleDailyReminder(this);
+            Log.d(TAG, "Alarma diaria programada para las 9:00 AM");
+
+            // PARA PRUEBAS: Programar también una alarma en 10 segundos
+            AlarmHelper.scheduleTestReminder(this);
+            Log.d(TAG, "Alarma de prueba programada para 10 segundos");
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error programando alarmas: ", e);
+            showToast("Error al programar recordatorios");
+        }
+    }
+
+    @Override
+    protected void onAllPermissionsGranted() {
+        super.onAllPermissionsGranted();
+        Log.d(TAG, "Todos los permisos concedidos - Experiencia completa disponible");
+        // No mostrar toast para no ser intrusivo
+    }
+
+    @Override
+    protected void onSomePermissionsDenied() {
+        super.onSomePermissionsDenied();
+        Log.w(TAG, "Algunos permisos denegados - Funcionalidades limitadas");
+        // No mostrar toast para no ser intrusivo
     }
 
     @Override

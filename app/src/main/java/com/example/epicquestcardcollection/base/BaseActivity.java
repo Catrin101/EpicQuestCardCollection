@@ -1,11 +1,20 @@
 package com.example.epicquestcardcollection.base;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.widget.Toast;
+
+import com.example.epicquestcardcollection.utils.PermissionManager;
+
+import org.jspecify.annotations.NonNull;
 
 /**
  * Clase base abstracta para todas las Activities de la aplicación.
@@ -70,5 +79,68 @@ public abstract class BaseActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(titleId);
             getSupportActionBar().setDisplayHomeAsUpEnabled(showHomeEnabled);
         }
+    }
+
+    // En BaseActivity.java - Agregar estas constantes y métodos simples:
+    protected static final int PERMISSION_REQUEST_CODE = 1001;
+    protected PermissionManager permissionManager;
+    /**
+     * Inicializa el PermissionManager de forma simple
+     */
+    protected void initializePermissionManager() {
+        permissionManager = new PermissionManager(this);
+    }
+
+    /**
+     * Solicita permisos faltantes de forma directa
+     */
+    protected void requestMissingPermissions() {
+        if (permissionManager != null) {
+            String[] missingPermissions = permissionManager.getMissingPermissions();
+            if (missingPermissions.length > 0) {
+                // Esto activará el cuadro de diálogo nativo de Android
+                requestPermissions(missingPermissions, PERMISSION_REQUEST_CODE);
+            }
+        }
+    }
+
+    /**
+     * Maneja el resultado de los permisos - metodo simple
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+
+            if (allGranted) {
+                onAllPermissionsGranted();
+            } else {
+                onSomePermissionsDenied();
+            }
+        }
+    }
+
+    /**
+     * Se llama cuando todos los permisos son concedidos
+     */
+    protected void onAllPermissionsGranted() {
+        Log.d(TAG, "Todos los permisos concedidos");
+    }
+
+    /**
+     * Se llama cuando algunos permisos son denegados
+     */
+    protected void onSomePermissionsDenied() {
+        Log.w(TAG, "Algunos permisos fueron denegados");
+        showToast("Algunas funciones pueden no estar disponibles");
     }
 }

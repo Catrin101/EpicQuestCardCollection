@@ -16,6 +16,11 @@
     <string name="onboarding_image">Imagen de onboarding</string>
     <string name="app_name" />
 
+    <string name="daily_reminder_title">¡Oportunidades Renovadas!</string>
+    <string name="daily_reminder_text">Tus 5 oportunidades diarias están listas. ¡Ven a obtener cartas!</string>
+    <string name="daily_reminder_channel_name">Recordatorios Diarios</string>
+    <string name="daily_reminder_channel_description">Notificaciones para recordar oportunidades diarias</string>
+
     <!-- Login y Registro -->
     <string name="app_logo">Logo de la aplicación</string>
     <string name="login_title">Iniciar Sesión</string>
