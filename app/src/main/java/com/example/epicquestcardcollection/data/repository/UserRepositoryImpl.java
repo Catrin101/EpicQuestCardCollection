@@ -1,6 +1,9 @@
 package com.example.epicquestcardcollection.data.repository;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.content.Context;
+import android.util.Log;
 
 import com.example.epicquestcardcollection.data.local.SessionManager;
 import com.example.epicquestcardcollection.data.local.SharedPreferencesHelper;
@@ -83,6 +86,22 @@ public class UserRepositoryImpl implements UserRepository {
         sessionManager.login(user);
 
         return new OperationResult(true, "Inicio de sesión exitoso", user);
+    }
+
+    @Override
+    public OperationResult resetDailyOpportunities() {
+        try {
+            User currentUser = getCurrentUser();
+            if (currentUser != null) {
+                currentUser.resetDailyOpportunities();
+                updateUser(currentUser);
+                return new OperationResult(true, "Oportunidades reseteadas a " + AppConstants.DAILY_OPPORTUNITIES);
+            }
+            return new OperationResult(false, "No hay usuario activo");
+        } catch (Exception e) {
+            Log.e(TAG, "Error resetting opportunities: ", e);
+            return new OperationResult(false, "Error al resetear oportunidades: " + e.getMessage());
+        }
     }
 
     @Override

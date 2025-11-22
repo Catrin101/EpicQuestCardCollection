@@ -14,6 +14,7 @@ import com.example.epicquestcardcollection.data.repository.UserRepository;
 import com.example.epicquestcardcollection.data.repository.UserRepositoryImpl;
 import com.example.epicquestcardcollection.model.HeroCard;
 import com.example.epicquestcardcollection.model.User;
+import com.example.epicquestcardcollection.utils.AppConstants;
 import com.example.epicquestcardcollection.utils.DateUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
@@ -40,6 +41,7 @@ public class CardObtainActivity extends BaseActivity implements SuperHeroAPI.Her
     private UserRepository userRepository;
     private User currentUser;
     private boolean isObtainingCard = false;
+    private Button btnResetOpportunities;
 
     @Override
     protected int getLayoutRes() {
@@ -59,6 +61,8 @@ public class CardObtainActivity extends BaseActivity implements SuperHeroAPI.Her
         tvHeroBiography = findViewById(R.id.tvHeroBiography);
         bottomNavigation = findViewById(R.id.bottom_navigation);
 
+        btnResetOpportunities = findViewById(R.id.btnResetOpportunities);
+
         userRepository = new UserRepositoryImpl(this);
         currentUser = userRepository.getCurrentUser();
 
@@ -70,6 +74,10 @@ public class CardObtainActivity extends BaseActivity implements SuperHeroAPI.Her
     @Override
     protected void setupListeners() {
         btnObtainCard.setOnClickListener(v -> attemptObtainCard());
+
+        if (btnResetOpportunities != null) {
+            btnResetOpportunities.setOnClickListener(v -> resetOpportunities());
+        }
 
         // Bottom Navigation listener
         bottomNavigation.setOnNavigationItemSelectedListener(item -> {
@@ -88,6 +96,17 @@ public class CardObtainActivity extends BaseActivity implements SuperHeroAPI.Her
         });
     }
 
+    private void resetOpportunities() {
+        if (userRepository != null) {
+            UserRepository.OperationResult result = userRepository.resetDailyOpportunities();
+            showToast(result.getMessage());
+            if (result.isSuccess()) {
+                currentUser = userRepository.getCurrentUser(); // Actualizar referencia
+                updateUI();
+            }
+        }
+    }
+
     private void setupBottomNavigation() {
         // Marcar la opción actual como seleccionada
         bottomNavigation.setSelectedItemId(R.id.navigation_obtain_cards);
@@ -96,15 +115,17 @@ public class CardObtainActivity extends BaseActivity implements SuperHeroAPI.Her
     private void updateUI() {
         if (currentUser == null) return;
 
-        // Actualizar oportunidades
+        // Actualizar oportunidades usando la constante
         int opportunities = currentUser.getDailyOpportunities();
-        tvOpportunities.setText("Oportunidades: " + opportunities + "/5");
+        int maxOpportunities = AppConstants.DAILY_OPPORTUNITIES; // Usar la constante
+        tvOpportunities.setText("Oportunidades: " + opportunities + "/" + maxOpportunities);
 
         // Verificar cooldown
         long lastCardTime = currentUser.getLastCardTime();
         long remainingCooldown = DateUtils.calculateRemainingCooldown(lastCardTime);
 
-        if (remainingCooldown > 0 && opportunities < 5) {
+        // Usar la constante para la comparación también
+        if (remainingCooldown > 0 && opportunities < maxOpportunities) {
             tvCooldown.setText("Siguiente oportunidad en: " +
                     DateUtils.formatRemainingTime(remainingCooldown));
             tvCooldown.setVisibility(View.VISIBLE);

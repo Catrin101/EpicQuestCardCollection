@@ -51,6 +51,14 @@
             android:name=".ui.activities.CardCollectionActivity"
             android:exported="false" />
 
+        <!-- Agregar después de las actividades existentes -->
+        <activity
+            android:name=".ui.activities.StatsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.activities.SettingsActivity"
+            android:exported="false" />
         <!-- ELIMINAR MainActivity temporal o comentarla -->
         <!-- <activity
             android:name=".ui.activities.MainActivity"

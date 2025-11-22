@@ -14,7 +14,7 @@ public class AppConstants {
     public static final String KEY_CURRENT_SESSION = "current_session";
 
     // Sistema de oportunidades
-    public static final int DAILY_OPPORTUNITIES = 500; // deven ser 5 por dia
+    public static final int DAILY_OPPORTUNITIES = 5; // deven ser 5 por dia
     public static final long OPPORTUNITY_COOLDOWN_MS = 5000; // 1 hora en milisegundos = 3600000
 
     // API

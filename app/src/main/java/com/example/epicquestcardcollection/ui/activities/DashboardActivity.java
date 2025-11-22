@@ -138,6 +138,7 @@ public class DashboardActivity extends BaseActivity {
             Log.d(TAG, "Navegando a CardObtainActivity");
             Intent intent = new Intent(this, CardObtainActivity.class);
             startActivity(intent);
+            // ELIMINAR finish() para mantener el Dashboard en el stack
         } catch (Exception e) {
             Log.e(TAG, "Error navegando a CardObtainActivity: ", e);
             e.printStackTrace();
@@ -150,6 +151,7 @@ public class DashboardActivity extends BaseActivity {
             Log.d(TAG, "Navegando a CardCollectionActivity");
             Intent intent = new Intent(this, CardCollectionActivity.class);
             startActivity(intent);
+            // ELIMINAR finish() para mantener el Dashboard en el stack
         } catch (Exception e) {
             Log.e(TAG, "Error navegando a CardCollectionActivity: ", e);
             e.printStackTrace();
@@ -158,11 +160,20 @@ public class DashboardActivity extends BaseActivity {
     }
 
     private void navigateToStats() {
-        showToast("Estadísticas - Próximamente");
+        try {
+            Log.d(TAG, "Navegando a StatsActivity");
+            Intent intent = new Intent(this, StatsActivity.class);
+            startActivity(intent);
+        } catch (Exception e) {
+            Log.e(TAG, "Error navegando a StatsActivity: ", e);
+            e.printStackTrace();
+            showToast("Error al abrir Estadísticas");
+        }
     }
 
     private void navigateToSettings() {
-        showToast("Configuración - Próximamente");
+        showToast("Configuración - Próximamente en Fase 5");
+        // Podemos implementar SettingsActivity después
     }
 
     private void performLogout() {

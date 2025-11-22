@@ -76,4 +76,9 @@ public interface UserRepository {
             return user;
         }
     }
+
+    /**
+     * Resetea las oportunidades diarias del usuario actual (para testing)
+     */
+    OperationResult resetDailyOpportunities();
 }

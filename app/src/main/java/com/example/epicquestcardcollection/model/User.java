@@ -1,5 +1,7 @@
 package com.example.epicquestcardcollection.model;
 
+import com.example.epicquestcardcollection.utils.AppConstants;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +63,14 @@ public class User {
             dailyOpportunities--;
             lastCardTime = System.currentTimeMillis();
         }
+    }
+
+    /**
+     * Reinicia las oportunidades diarias (para testing)
+     */
+    public void resetDailyOpportunities() {
+        this.dailyOpportunities = AppConstants.DAILY_OPPORTUNITIES;
+        this.lastCardTime = 0;
     }
 
     // ==================== GETTERS Y SETTERS ====================
