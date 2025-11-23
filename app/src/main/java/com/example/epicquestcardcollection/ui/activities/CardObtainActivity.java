@@ -207,12 +207,35 @@ public class CardObtainActivity extends BaseActivity implements SuperHeroAPI.Her
         );
         tvHeroStats.setText(stats);
 
-        // Cargar imagen con Picasso
-        Picasso.get()
-                .load(heroCard.getImageUrl())
-                .placeholder(R.drawable.ic_launcher_foreground)
-                .error(R.drawable.ic_launcher_foreground)
-                .into(ivHeroImage);
+        // Cargar imagen con Picasso - MEJORADO
+        String imageUrl = heroCard.getImageUrl();
+
+        // Validar que la URL no sea nula o vacía
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Picasso.get()
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_launcher_foreground)
+                    .fit()
+                    .centerCrop()
+                    .into(ivHeroImage, new com.squareup.picasso.Callback() {
+                        @Override
+                        public void onSuccess() {
+                            // Imagen cargada exitosamente
+                            android.util.Log.d("Picasso", "Imagen cargada: " + imageUrl);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            // Error al cargar
+                            android.util.Log.e("Picasso", "Error cargando imagen: " + e.getMessage());
+                            tvHeroName.setText(tvHeroName.getText() + " [Imagen no disponible]");
+                        }
+                    });
+        } else {
+            android.util.Log.w("CardObtain", "URL de imagen vacía o nula");
+            ivHeroImage.setImageResource(R.drawable.ic_launcher_foreground);
+        }
 
         // Mostrar contenedor de carta
         cardContainer.setVisibility(View.VISIBLE);

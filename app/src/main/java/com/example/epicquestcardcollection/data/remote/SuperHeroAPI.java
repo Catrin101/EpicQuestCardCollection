@@ -123,6 +123,7 @@ public class SuperHeroAPI {
             JSONObject jsonObject = new JSONObject(jsonResponse);
 
             if (!jsonObject.getString("response").equals("success")) {
+                Log.w("SuperHeroAPI", "Respuesta de API no exitosa para ID: " + heroId);
                 return null;
             }
 
@@ -136,9 +137,17 @@ public class SuperHeroAPI {
             String publisher = biography.getString("publisher");
             String biographyText = fullName + " - " + publisher;
 
-            // Imagen
+            // Imagen - MEJORADO CON VALIDACIÓN
             JSONObject image = jsonObject.getJSONObject("image");
             String imageUrl = image.getString("url");
+
+            // Validar y loguear la URL
+            if (imageUrl == null || imageUrl.isEmpty() || imageUrl.equals("null")) {
+                Log.e("SuperHeroAPI", "URL de imagen inválida para " + name);
+                imageUrl = ""; // URL vacía por defecto
+            } else {
+                Log.d("SuperHeroAPI", "URL válida para " + name + ": " + imageUrl);
+            }
 
             // Estadísticas de poder
             JSONObject powerstats = jsonObject.getJSONObject("powerstats");
@@ -150,11 +159,13 @@ public class SuperHeroAPI {
             stats.setPower(safeParseInt(powerstats.getString("power")));
             stats.setCombat(safeParseInt(powerstats.getString("combat")));
 
+            Log.d("SuperHeroAPI", "Héroe parseado: " + name + " (ID: " + id + ")");
+
             // Crear y retornar HeroCard
             return new HeroCard(id, name, biographyText, imageUrl, stats);
 
         } catch (Exception e) {
-            Log.e("SuperHeroAPI", "Error parsing JSON: " + e.getMessage());
+            Log.e("SuperHeroAPI", "Error parsing JSON: " + e.getMessage(), e);
             return null;
         }
     }

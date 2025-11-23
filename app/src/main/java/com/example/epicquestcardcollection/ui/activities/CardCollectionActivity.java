@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -30,6 +31,7 @@ public class CardCollectionActivity extends BaseActivity implements CollectionAd
     private RecyclerView recyclerViewCollection;
     private TextView tvEmptyState;
     private TextView tvCollectionStats;
+    private ProgressBar progressCollection;
     private BottomNavigationView bottomNavigation;
 
     private UserRepository userRepository;
@@ -48,6 +50,7 @@ public class CardCollectionActivity extends BaseActivity implements CollectionAd
         recyclerViewCollection = findViewById(R.id.recyclerViewCollection);
         tvEmptyState = findViewById(R.id.tvEmptyState);
         tvCollectionStats = findViewById(R.id.tvCollectionStats);
+        progressCollection = findViewById(R.id.progressCollection);
         bottomNavigation = findViewById(R.id.bottom_navigation);
 
         userRepository = new UserRepositoryImpl(this);
@@ -123,6 +126,9 @@ public class CardCollectionActivity extends BaseActivity implements CollectionAd
     private void updateCollectionStats() {
         if (currentUser == null || allCards.isEmpty()) {
             tvCollectionStats.setText("Colección: 0 cartas");
+            if (progressCollection != null) {
+                progressCollection.setProgress(0);
+            }
             return;
         }
 
@@ -154,6 +160,13 @@ public class CardCollectionActivity extends BaseActivity implements CollectionAd
                 totalCards, common, uncommon, rare, epic, legendary
         );
         tvCollectionStats.setText(stats);
+
+        // Actualizar barra de progreso
+        if (progressCollection != null) {
+            int maxCards = 100; // Puedes cambiar esto según tus necesidades
+            int progress = Math.min((totalCards * 100) / maxCards, 100);
+            progressCollection.setProgress(progress);
+        }
     }
 
     /**
@@ -186,16 +199,22 @@ public class CardCollectionActivity extends BaseActivity implements CollectionAd
         }
     }
 
+    /**
+     * Se ejecuta cuando el usuario hace clic en una tarjeta
+     * Abre la actividad de detalles del héroe
+     */
     @Override
     public void onCardClick(HeroCard heroCard) {
-        // TODO: En una futura iteración, mostrar detalles de la carta
-        showToast("Carta: " + heroCard.getName() + " (" + heroCard.getRarity() + ")");
+        HeroDetailActivity.start(this, heroCard);
     }
 
+    /**
+     * Se ejecuta cuando el usuario mantiene presionada una tarjeta
+     */
     @Override
     public void onCardLongClick(HeroCard heroCard) {
-        // TODO: En una futura iteración, mostrar opciones (eliminar, favorito, etc.)
         showToast("Mantén presionado: " + heroCard.getName());
+        // TODO: En una futura iteración, mostrar opciones (eliminar, favorito, etc.)
     }
 
     // Métodos para los filtros (se llaman desde el XML)
@@ -226,7 +245,6 @@ public class CardCollectionActivity extends BaseActivity implements CollectionAd
     @SuppressLint("GestureBackNavigation")
     @Override
     public void onBackPressed() {
-        // Navegar de vuelta al Dashboard en lugar de cerrar la app
         super.onBackPressed();
         navigateToDashboard();
     }

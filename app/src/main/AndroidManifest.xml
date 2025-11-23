@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- Permisos para Fase 5 -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -90,6 +91,9 @@
             android:enabled="true"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.activities.HeroDetailActivity"
+            android:exported="false" />
         <!-- Receiver para Conectividad -->
         <receiver
             android:name=".receivers.NetworkReceiver"

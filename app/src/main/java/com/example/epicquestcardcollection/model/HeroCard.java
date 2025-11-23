@@ -1,11 +1,15 @@
 package com.example.epicquestcardcollection.model;
 
 import com.example.epicquestcardcollection.R;
+import java.io.Serializable;
 
 /**
  * Modelo que representa una carta de héroe con toda su información.
+ * Implementa Serializable para poder pasar el objeto entre actividades.
  */
-public class HeroCard {
+public class HeroCard implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String id;
     private String name;
     private String biography;
@@ -82,7 +86,9 @@ public class HeroCard {
     public long getObtainedAt() { return obtainedAt; }
     public void setObtainedAt(long obtainedAt) { this.obtainedAt = obtainedAt; }
 
-    // Agregar este método para determinar el color de la rareza
+    /**
+     * Método para determinar el color de la rareza
+     */
     public int getRarityColor() {
         switch (rarity) {
             case "LEGENDARY":
