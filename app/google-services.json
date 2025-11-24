@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "805508675040",
+    "project_id": "epicquestcardcollection",
+    "storage_bucket": "epicquestcardcollection.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805508675040:android:ea72609c9ce92eab1c6785",
+        "android_client_info": {
+          "package_name": "com.example.epicquestcardcollection"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4yCAtcGtA4b-AgZ8bI-L8W5xtPOYlZYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
