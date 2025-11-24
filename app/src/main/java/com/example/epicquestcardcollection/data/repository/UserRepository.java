@@ -1,84 +1,58 @@
 package com.example.epicquestcardcollection.data.repository;
 
+import com.example.epicquestcardcollection.base.data.Result;
 import com.example.epicquestcardcollection.model.User;
-import com.example.epicquestcardcollection.utils.ValidationUtils;
 
 /**
  * Contrato que define las operaciones disponibles para la gestión de usuarios.
  * Sigue el patrón Repository para abstraer el origen de datos.
  */
 public interface UserRepository {
+    /**
+     * Callback para operaciones asíncronas.
+     * @param <T>
+     */
+    interface Callback<T> {
+        void onResult(Result<T> result);
+    }
 
     /**
      * Registra un nuevo usuario en el sistema
      */
-    OperationResult registerUser(String username, String password, String email);
+    void registerUser(String username, String password, String email, Callback<User> callback);
 
     /**
      * Autentica un usuario con sus credenciales
      */
-    OperationResult loginUser(String username, String password);
+    void loginUser(String username, String password, Callback<User> callback);
 
     /**
      * Cierra la sesión del usuario actual
      */
-    OperationResult logoutUser();
+    void logoutUser(Callback<Void> callback);
 
     /**
      * Obtiene el usuario actualmente logueado
-     * @return El usuario actual o null si no hay sesión
-     * @apiNote Se recomienda validar el resultado para evitar NullPointerExceptions.
      */
-    User getCurrentUser();
+    void getCurrentUser(Callback<User> callback);
 
     /**
      * Actualiza los datos de un usuario
      */
-    OperationResult updateUser(User user);
+    void updateUser(User user, Callback<User> callback);
 
     /**
      * Verifica si un username ya está en uso
      */
-    boolean isUsernameTaken(String username);
+    void isUsernameTaken(String username, Callback<Boolean> callback);
 
     /**
      * Verifica si hay una sesión activa
      */
-    boolean isUserLoggedIn();
-
-    /**
-     * Resultado de una operación del repositorio
-     */
-    class OperationResult {
-        private final boolean success;
-        private final String message;
-        private final User user;
-
-        public OperationResult(boolean success, String message) {
-            this(success, message, null);
-        }
-
-        public OperationResult(boolean success, String message, User user) {
-            this.success = success;
-            this.message = message;
-            this.user = user;
-        }
-
-        public boolean isSuccess() {
-            return success;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public User getUser() {
-            return user;
-        }
-    }
+    void isUserLoggedIn(Callback<Boolean> callback);
 
     /**
      * Resetea las oportunidades diarias del usuario actual (para testing)
      */
-    OperationResult resetDailyOpportunities();
+    void resetDailyOpportunities(Callback<Void> callback);
 }

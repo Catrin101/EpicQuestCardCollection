@@ -1,10 +1,10 @@
 package com.example.epicquestcardcollection.data.repository;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.content.Context;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 
+import com.example.epicquestcardcollection.base.data.Result;
 import com.example.epicquestcardcollection.data.local.SessionManager;
 import com.example.epicquestcardcollection.data.local.SharedPreferencesHelper;
 import com.example.epicquestcardcollection.model.User;
@@ -16,6 +16,8 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Implementación concreta del UserRepository usando SharedPreferences.
@@ -26,146 +28,188 @@ public class UserRepositoryImpl implements UserRepository {
     private final SharedPreferencesHelper prefsHelper;
     private final SessionManager sessionManager;
     private final Gson gson;
+    private final Executor executor;
+    private final Handler mainHandler;
 
     public UserRepositoryImpl(Context context) {
         this.prefsHelper = new SharedPreferencesHelper(context, AppConstants.PREFS_NAME);
         this.sessionManager = SessionManager.getInstance(context);
         this.gson = new Gson();
+        this.executor = Executors.newSingleThreadExecutor();
+        this.mainHandler = new Handler(Looper.getMainLooper());
     }
 
     @Override
-    public OperationResult registerUser(String username, String password, String email) {
-        // Validar datos de entrada
-        ValidationUtils.ValidationResult validation =
-                ValidationUtils.validateRegistrationData(username, password, email);
+    public void registerUser(String username, String password, String email, Callback<User> callback) {
+        executor.execute(() -> {
+            try {
+                ValidationUtils.ValidationResult validation =
+                        ValidationUtils.validateRegistrationData(username, password, email);
+                if (!validation.isValid()) {
+                    throw new Exception(validation.getMessage());
+                }
 
-        if (!validation.isValid()) {
-            return new OperationResult(false, validation.getMessage());
-        }
+                if (isUsernameTakenSync(username)) {
+                    throw new Exception("El nombre de usuario ya está en uso");
+                }
 
-        // Verificar si el username ya existe
-        if (isUsernameTaken(username)) {
-            return new OperationResult(false, "El nombre de usuario ya está en uso");
-        }
+                User newUser = new User(username, password, email);
+                saveUserToRegistry(newUser);
+                sessionManager.login(newUser);
 
-        // Crear nuevo usuario
-        User newUser = new User(username, password, email);
-
-        // Guardar usuario en el registro
-        saveUserToRegistry(newUser);
-
-        // Iniciar sesión automáticamente
-        sessionManager.login(newUser);
-
-        return new OperationResult(true, "Usuario registrado exitosamente", newUser);
-    }
-
-    @Override
-    public OperationResult loginUser(String username, String password) {
-        // Validar credenciales
-        ValidationUtils.ValidationResult validation =
-                ValidationUtils.validateLoginCredentials(username, password);
-
-        if (!validation.isValid()) {
-            return new OperationResult(false, validation.getMessage());
-        }
-
-        // Obtener usuario del registro
-        User user = getUserFromRegistry(username);
-        if (user == null) {
-            return new OperationResult(false, "Usuario no encontrado");
-        }
-
-        // Verificar contraseña (en producción esto sería un hash)
-        // TODO: Implementar hashing de contraseñas para mejorar la seguridad.
-        if (!user.getPassword().equals(password)) {
-            return new OperationResult(false, "Contraseña incorrecta");
-        }
-
-        // Iniciar sesión
-        sessionManager.login(user);
-
-        return new OperationResult(true, "Inicio de sesión exitoso", user);
-    }
-
-    @Override
-    public OperationResult resetDailyOpportunities() {
-        try {
-            User currentUser = getCurrentUser();
-            if (currentUser != null) {
-                currentUser.resetDailyOpportunities();
-                updateUser(currentUser);
-                return new OperationResult(true, "Oportunidades reseteadas a " + AppConstants.DAILY_OPPORTUNITIES);
+                mainHandler.post(() -> callback.onResult(Result.success(newUser)));
+            } catch (Exception e) {
+                mainHandler.post(() -> callback.onResult(Result.error(e)));
             }
-            return new OperationResult(false, "No hay usuario activo");
-        } catch (Exception e) {
-            Log.e(TAG, "Error resetting opportunities: ", e);
-            return new OperationResult(false, "Error al resetear oportunidades: " + e.getMessage());
-        }
+        });
     }
 
     @Override
-    public OperationResult logoutUser() {
-        if (!sessionManager.isLoggedIn()) {
-            return new OperationResult(false, "No hay sesión activa");
-        }
+    public void loginUser(String username, String password, Callback<User> callback) {
+        executor.execute(() -> {
+            try {
+                ValidationUtils.ValidationResult validation =
+                        ValidationUtils.validateLoginCredentials(username, password);
+                if (!validation.isValid()) {
+                    throw new Exception(validation.getMessage());
+                }
 
-        sessionManager.logout();
-        return new OperationResult(true, "Sesión cerrada exitosamente");
+                User user = getUserFromRegistry(username);
+                if (user == null) {
+                    throw new Exception("Usuario no encontrado");
+                }
+
+                if (!user.checkPassword(password)) {
+                    throw new Exception("Contraseña incorrecta");
+                }
+
+                if (user.getPassword() != null) {
+                    user.upgradePassword(password);
+                    saveUserToRegistry(user);
+                }
+
+                sessionManager.login(user);
+                mainHandler.post(() -> callback.onResult(Result.success(user)));
+            } catch (Exception e) {
+                mainHandler.post(() -> callback.onResult(Result.error(e)));
+            }
+        });
     }
 
     @Override
-    public User getCurrentUser() {
-        return sessionManager.getCurrentUser();
+    public void logoutUser(Callback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                if (!sessionManager.isLoggedIn()) {
+                    throw new Exception("No hay sesión activa");
+                }
+                sessionManager.logout();
+                mainHandler.post(() -> callback.onResult(Result.success(null)));
+            } catch (Exception e) {
+                mainHandler.post(() -> callback.onResult(Result.error(e)));
+            }
+        });
     }
 
     @Override
-    public OperationResult updateUser(User user) {
-        if (user == null) {
-            return new OperationResult(false, "Usuario inválido");
-        }
-
-        // Guardar cambios en el registro
-        saveUserToRegistry(user);
-
-        // Si es el usuario actual, actualizar la sesión
-        User currentUser = sessionManager.getCurrentUser();
-        if (currentUser != null && currentUser.getUsername().equals(user.getUsername())) {
-            sessionManager.login(user);
-        }
-
-        return new OperationResult(true, "Usuario actualizado exitosamente", user);
+    public void getCurrentUser(Callback<User> callback) {
+        executor.execute(() -> {
+            try {
+                User user = sessionManager.getCurrentUser();
+                mainHandler.post(() -> callback.onResult(Result.success(user)));
+            } catch (Exception e) {
+                mainHandler.post(() -> callback.onResult(Result.error(e)));
+            }
+        });
     }
 
     @Override
-    public boolean isUsernameTaken(String username) {
+    public void updateUser(User user, Callback<User> callback) {
+        executor.execute(() -> {
+            try {
+                if (user == null) {
+                    throw new Exception("Usuario inválido");
+                }
+
+                saveUserToRegistry(user);
+                User currentUser = sessionManager.getCurrentUser();
+                if (currentUser != null && currentUser.getUsername().equals(user.getUsername())) {
+                    sessionManager.login(user);
+                }
+
+                mainHandler.post(() -> callback.onResult(Result.success(user)));
+            } catch (Exception e) {
+                mainHandler.post(() -> callback.onResult(Result.error(e)));
+            }
+        });
+    }
+
+    @Override
+    public void isUsernameTaken(String username, Callback<Boolean> callback) {
+        executor.execute(() -> {
+            try {
+                boolean isTaken = isUsernameTakenSync(username);
+                mainHandler.post(() -> callback.onResult(Result.success(isTaken)));
+            } catch (Exception e) {
+                mainHandler.post(() -> callback.onResult(Result.error(e)));
+            }
+        });
+    }
+
+    @Override
+    public void isUserLoggedIn(Callback<Boolean> callback) {
+        executor.execute(() -> {
+            try {
+                boolean isLoggedIn = sessionManager.isLoggedIn();
+                mainHandler.post(() -> callback.onResult(Result.success(isLoggedIn)));
+            } catch (Exception e) {
+                mainHandler.post(() -> callback.onResult(Result.error(e)));
+            }
+        });
+    }
+
+    @Override
+    public void resetDailyOpportunities(Callback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                User currentUser = sessionManager.getCurrentUser();
+                if (currentUser != null) {
+                    currentUser.resetDailyOpportunities();
+                    saveUserToRegistry(currentUser);
+                    mainHandler.post(() -> callback.onResult(Result.success(null)));
+                } else {
+                    throw new Exception("No hay usuario activo");
+                }
+            } catch (Exception e) {
+                mainHandler.post(() -> callback.onResult(Result.error(e)));
+            }
+        });
+    }
+
+    /**
+     * Verifica si un username ya está en uso de forma síncrona.
+     * @param username
+     * @return
+     */
+    private boolean isUsernameTakenSync(String username) {
         return getUserFromRegistry(username) != null;
     }
 
-    @Override
-    public boolean isUserLoggedIn() {
-        return sessionManager.isLoggedIn();
-    }
-
-    // ==================== MÉTODOS PRIVADOS ====================
-
     /**
-     * Guarda un usuario en el registro de usuarios
+     * Guarda un usuario en el registro de usuarios.
+     * @param user
      */
     private void saveUserToRegistry(User user) {
-        // Obtener el mapa actual de usuarios
         Map<String, User> users = getUsersRegistry();
-
-        // Agregar/actualizar usuario
         users.put(user.getUsername(), user);
-
-        // Guardar mapa actualizado
         String usersJson = gson.toJson(users);
         prefsHelper.putString(AppConstants.KEY_USERS_DATA, usersJson);
     }
 
     /**
-     * Obtiene un usuario del registro por username
+     * Obtiene un usuario del registro por username.
+     * @param username
+     * @return
      */
     private User getUserFromRegistry(String username) {
         Map<String, User> users = getUsersRegistry();
@@ -173,14 +217,14 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     /**
-     * Obtiene el mapa completo de usuarios registrados
+     * Obtiene el mapa completo de usuarios registrados.
+     * @return
      */
     private Map<String, User> getUsersRegistry() {
         String usersJson = prefsHelper.getString(AppConstants.KEY_USERS_DATA, "{}");
-
-        Type type = new TypeToken<HashMap<String, User>>(){}.getType();
+        Type type = new TypeToken<HashMap<String, User>>() {
+        }.getType();
         Map<String, User> users = gson.fromJson(usersJson, type);
-
         return users != null ? users : new HashMap<>();
     }
 }
