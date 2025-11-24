@@ -1,10 +1,14 @@
 package com.example.epicquestcardcollection.model;
 
+import java.io.Serializable;
+
 /**
  * Modelo que representa las estadísticas de poder de un héroe.
  * Valores van de 0 a 100 para cada estadística.
  */
-public class PowerStats {
+public class PowerStats implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int intelligence;
     private int strength;
     private int speed;

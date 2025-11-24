@@ -5,7 +5,7 @@ import android.content.pm.PackageManager;
 import androidx.core.content.ContextCompat;
 
 /**
- * Gestor minimalista de permisos - Solo verificación básica
+ * Gestor de permisos - Verificación de todos los permisos necesarios
  */
 public class PermissionManager {
 
@@ -13,8 +13,15 @@ public class PermissionManager {
     public static final String[] REQUIRED_PERMISSIONS = {
             android.Manifest.permission.CAMERA,
             android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.POST_NOTIFICATIONS
     };
+
+    // Permisos individuales para referencias rápidas
+    public static final String PERMISSION_CAMERA = android.Manifest.permission.CAMERA;
+    public static final String PERMISSION_LOCATION_FINE = android.Manifest.permission.ACCESS_FINE_LOCATION;
+    public static final String PERMISSION_LOCATION_COARSE = android.Manifest.permission.ACCESS_COARSE_LOCATION;
+    public static final String PERMISSION_NOTIFICATIONS = android.Manifest.permission.POST_NOTIFICATIONS;
 
     private final Context context;
 
@@ -52,5 +59,27 @@ public class PermissionManager {
      */
     public boolean isPermissionGranted(String permission) {
         return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * Verifica si el permiso de cámara está concedido
+     */
+    public boolean isCameraPermissionGranted() {
+        return isPermissionGranted(PERMISSION_CAMERA);
+    }
+
+    /**
+     * Verifica si el permiso de ubicación está concedido
+     */
+    public boolean isLocationPermissionGranted() {
+        return isPermissionGranted(PERMISSION_LOCATION_FINE) ||
+                isPermissionGranted(PERMISSION_LOCATION_COARSE);
+    }
+
+    /**
+     * Verifica si el permiso de notificaciones está concedido
+     */
+    public boolean isNotificationPermissionGranted() {
+        return isPermissionGranted(PERMISSION_NOTIFICATIONS);
     }
 }

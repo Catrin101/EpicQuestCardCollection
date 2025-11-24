@@ -57,38 +57,58 @@ public class HeroDetailActivity extends BaseActivity {
 
     @Override
     protected void initializeUI() {
-        // Inicializar vistas principales
-        btnBack = findViewById(R.id.btnBack);
-        ivHeroImage = findViewById(R.id.ivHeroImage);
-        tvHeroName = findViewById(R.id.tvHeroName);
-        tvRarityBadge = findViewById(R.id.tvRarityBadge);
-        rarityIndicatorCircle = findViewById(R.id.rarityIndicatorCircle);
-        tvFullName = findViewById(R.id.tvFullName);
-        tvPublisher = findViewById(R.id.tvPublisher);
-        tvHeroId = findViewById(R.id.tvHeroId);
-        tvTotalPower = findViewById(R.id.tvTotalPower);
+        try {
+            // Inicializar vistas principales
+            btnBack = findViewById(R.id.btnBack);
+            ivHeroImage = findViewById(R.id.ivHeroImage);
+            tvHeroName = findViewById(R.id.tvHeroName);
+            tvRarityBadge = findViewById(R.id.tvRarityBadge);
+            rarityIndicatorCircle = findViewById(R.id.rarityIndicatorCircle);
+            tvFullName = findViewById(R.id.tvFullName);
+            tvPublisher = findViewById(R.id.tvPublisher);
+            tvHeroId = findViewById(R.id.tvHeroId);
+            tvTotalPower = findViewById(R.id.tvTotalPower);
 
-        // Inicializar estadísticas
-        tvIntelligenceValue = findViewById(R.id.tvIntelligenceValue);
-        pbIntelligence = findViewById(R.id.pbIntelligence);
-        tvStrengthValue = findViewById(R.id.tvStrengthValue);
-        pbStrength = findViewById(R.id.pbStrength);
-        tvSpeedValue = findViewById(R.id.tvSpeedValue);
-        pbSpeed = findViewById(R.id.pbSpeed);
-        tvDurabilityValue = findViewById(R.id.tvDurabilityValue);
-        pbDurability = findViewById(R.id.pbDurability);
-        tvPowerValue = findViewById(R.id.tvPowerValue);
-        pbPower = findViewById(R.id.pbPower);
-        tvCombatValue = findViewById(R.id.tvCombatValue);
-        pbCombat = findViewById(R.id.pbCombat);
+            // Inicializar estadísticas
+            tvIntelligenceValue = findViewById(R.id.tvIntelligenceValue);
+            pbIntelligence = findViewById(R.id.pbIntelligence);
+            tvStrengthValue = findViewById(R.id.tvStrengthValue);
+            pbStrength = findViewById(R.id.pbStrength);
+            tvSpeedValue = findViewById(R.id.tvSpeedValue);
+            pbSpeed = findViewById(R.id.pbSpeed);
+            tvDurabilityValue = findViewById(R.id.tvDurabilityValue);
+            pbDurability = findViewById(R.id.pbDurability);
+            tvPowerValue = findViewById(R.id.tvPowerValue);
+            pbPower = findViewById(R.id.pbPower);
+            tvCombatValue = findViewById(R.id.tvCombatValue);
+            pbCombat = findViewById(R.id.pbCombat);
 
-        // Obtener héroe del intent
-        currentHero = (HeroCard) getIntent().getSerializableExtra(HERO_EXTRA);
+            // Obtener héroe del intent - CON VALIDACIÓN
+            android.util.Log.d("HeroDetail", "Intentando obtener héroe del intent...");
 
-        if (currentHero != null) {
+            if (getIntent() == null) {
+                android.util.Log.e("HeroDetail", "Intent es nulo!");
+                showToast("Error: Intent inválido");
+                finish();
+                return;
+            }
+
+            currentHero = (HeroCard) getIntent().getSerializableExtra(HERO_EXTRA);
+
+            if (currentHero == null) {
+                android.util.Log.e("HeroDetail", "currentHero es nulo después de getSerializableExtra");
+                android.util.Log.e("HeroDetail", "Intent extras: " + getIntent().getExtras());
+                showToast("Error: No se pudo cargar el héroe");
+                finish();
+                return;
+            }
+
+            android.util.Log.d("HeroDetail", "✓ Héroe cargado: " + currentHero.getName());
             displayHeroDetails();
-        } else {
-            showToast("Error: No se pudo cargar el héroe");
+
+        } catch (Exception e) {
+            android.util.Log.e("HeroDetail", "Error crítico en initializeUI", e);
+            showToast("Error: " + e.getMessage());
             finish();
         }
     }

@@ -199,12 +199,33 @@ public class CardCollectionActivity extends BaseActivity implements CollectionAd
         }
     }
 
+    // Metodo para verificar si HeroCard es serializable
+    private void debugCardClick(HeroCard heroCard) {
+        android.util.Log.d("CardClick", "======= DEBUG =======");
+        android.util.Log.d("CardClick", "Héroe: " + heroCard.getName());
+        android.util.Log.d("CardClick", "ID: " + heroCard.getId());
+        android.util.Log.d("CardClick", "Rarity: " + heroCard.getRarity());
+        android.util.Log.d("CardClick", "ImageURL: " + heroCard.getImageUrl());
+
+        try {
+            // Intentar serializar
+            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+            java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(baos);
+            oos.writeObject(heroCard);
+            oos.close();
+            android.util.Log.d("CardClick", "✓ Serialización exitosa");
+        } catch (Exception e) {
+            android.util.Log.e("CardClick", "✗ Error serializando: " + e.getMessage(), e);
+        }
+    }
+
     /**
      * Se ejecuta cuando el usuario hace clic en una tarjeta
      * Abre la actividad de detalles del héroe
      */
     @Override
     public void onCardClick(HeroCard heroCard) {
+        debugCardClick(heroCard); // Agregar esta línea
         HeroDetailActivity.start(this, heroCard);
     }
 
