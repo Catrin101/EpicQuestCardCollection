@@ -13,10 +13,6 @@ import com.example.epicquestcardcollection.data.repository.UserRepository;
 import com.example.epicquestcardcollection.data.repository.UserRepositoryImpl;
 import com.google.android.material.textfield.TextInputEditText;
 
-/**
- * Actividad para el registro de nuevos usuarios.
- * Permite crear una cuenta para guardar la colección de cartas.
- */
 public class RegisterActivity extends BaseActivity {
 
     private TextInputEditText etUsername;
@@ -54,16 +50,13 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private void attemptRegistration() {
-        // Ocultar error anterior
         hideError();
 
-        // Obtener datos del formulario
         String username = etUsername.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
         String confirmPassword = etConfirmPassword.getText().toString().trim();
 
-        // Validaciones
         if (TextUtils.isEmpty(username)) {
             showError(getString(R.string.error_username_required));
             etUsername.requestFocus();
@@ -94,28 +87,24 @@ public class RegisterActivity extends BaseActivity {
             return;
         }
 
-        // Intentar registro
         performRegistration(username, email, password);
     }
 
     private void performRegistration(String username, String email, String password) {
-        // Mostrar progreso
         btnRegister.setEnabled(false);
         btnRegister.setText(R.string.registering);
 
-        // Usar el repositorio para registrar usuario
-        UserRepository.OperationResult result = userRepository.registerUser(username, password, email);
-
-        if (result.isSuccess()) {
-            // Registro exitoso
-            showToast(result.getMessage());
-            navigateToWelcome();
-        } else {
-            // Error en registro
-            showError(result.getMessage());
-            btnRegister.setEnabled(true);
-            btnRegister.setText(R.string.register);
-        }
+        userRepository.registerUser(username, password, email, result -> {
+            if (result.isSuccess()) {
+                showToast("Usuario registrado exitosamente");
+                navigateToWelcome();
+            } else {
+                String errorMessage = result.getError().getMessage();
+                showError(errorMessage != null ? errorMessage : "Error desconocido");
+                btnRegister.setEnabled(true);
+                btnRegister.setText(R.string.register);
+            }
+        });
     }
 
     private void showError(String errorMessage) {
@@ -130,7 +119,7 @@ public class RegisterActivity extends BaseActivity {
     private void navigateToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
-        finish(); // Finalizamos esta actividad ya que no queremos volver atrás en el registro
+        finish();
     }
 
     private void navigateToWelcome() {

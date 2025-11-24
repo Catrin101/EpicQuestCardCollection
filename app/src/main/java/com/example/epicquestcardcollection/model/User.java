@@ -1,17 +1,17 @@
 package com.example.epicquestcardcollection.model;
 
 import com.example.epicquestcardcollection.utils.AppConstants;
+import com.example.epicquestcardcollection.utils.PasswordHasher;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Modelo que representa un usuario de la aplicación.
- * Contiene toda la información del usuario y su progreso en el juego.
- */
 public class User {
     private String username;
-    private String password; // En producción debería ser hash
+    private String password;
+    private String hashedPassword;
+    private byte[] salt;
     private String email;
     private List<HeroCard> collection;
     private int dailyOpportunities;
@@ -22,7 +22,7 @@ public class User {
 
     public User() {
         this.collection = new ArrayList<>();
-        this.dailyOpportunities = 5; // Valor por defecto
+        this.dailyOpportunities = 5;
         this.lastCardTime = 0;
         this.playerLevel = 1;
         this.achievements = new ArrayList<>();
@@ -33,31 +33,43 @@ public class User {
         this();
         this.username = username;
         this.password = password;
+        try {
+            this.salt = PasswordHasher.getSalt();
+            this.hashedPassword = PasswordHasher.getSecurePassword(password, this.salt);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         this.email = email;
     }
 
-    // ==================== MÉTODOS DE NEGOCIO ====================
-
-    /**
-     * Agrega una carta a la colección del usuario
-     */
-    public void addCardToCollection(HeroCard card) {
-        if (card != null && !collection.contains(card)) {
-            collection.add(card);
-            // TODO: En futuras iteraciones, actualizar logros y nivel
+    public boolean checkPassword(String password) {
+        if (this.hashedPassword != null && this.salt != null) {
+            return this.hashedPassword.equals(PasswordHasher.getSecurePassword(password, this.salt));
+        } else {
+            return this.password.equals(password);
         }
     }
 
-    /**
-     * Verifica si el usuario puede obtener una carta
-     */
+    public void upgradePassword(String password) {
+        try {
+            this.salt = PasswordHasher.getSalt();
+            this.hashedPassword = PasswordHasher.getSecurePassword(password, this.salt);
+            this.password = null;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addCardToCollection(HeroCard card) {
+        if (card != null && !collection.contains(card)) {
+            collection.add(card);
+        }
+    }
+
     public boolean canObtainCard() {
         return dailyOpportunities > 0;
     }
 
-    /**
-     * Consume una oportunidad diaria
-     */
     public void consumeOpportunity() {
         if (dailyOpportunities > 0) {
             dailyOpportunities--;
@@ -65,21 +77,22 @@ public class User {
         }
     }
 
-    /**
-     * Reinicia las oportunidades diarias (para testing)
-     */
     public void resetDailyOpportunities() {
         this.dailyOpportunities = AppConstants.DAILY_OPPORTUNITIES;
         this.lastCardTime = 0;
     }
-
-    // ==================== GETTERS Y SETTERS ====================
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public String getHashedPassword() { return hashedPassword; }
+    public void setHashedPassword(String hashedPassword) { this.hashedPassword = hashedPassword; }
+
+    public byte[] getSalt() { return salt; }
+    public void setSalt(byte[] salt) { this.salt = salt; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

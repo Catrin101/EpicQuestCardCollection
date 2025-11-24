@@ -11,12 +11,9 @@ import com.example.epicquestcardcollection.R;
 import com.example.epicquestcardcollection.base.BaseActivity;
 import com.example.epicquestcardcollection.data.repository.UserRepository;
 import com.example.epicquestcardcollection.data.repository.UserRepositoryImpl;
+import com.example.epicquestcardcollection.model.User;
 import com.google.android.material.textfield.TextInputEditText;
 
-/**
- * Actividad para el inicio de sesión de usuarios.
- * Permite a los usuarios autenticarse con sus credenciales.
- */
 public class LoginActivity extends BaseActivity {
 
     private TextInputEditText etUsername;
@@ -50,14 +47,11 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void attemptLogin() {
-        // Ocultar error anterior
         hideError();
 
-        // Obtener credenciales
         String username = etUsername.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        // Validar campos vacíos
         if (TextUtils.isEmpty(username)) {
             showError(getString(R.string.error_username_required));
             etUsername.requestFocus();
@@ -70,28 +64,24 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
-        // Intentar login
         performLogin(username, password);
     }
 
     private void performLogin(String username, String password) {
-        // Mostrar progreso
         btnLogin.setEnabled(false);
         btnLogin.setText(R.string.logging_in);
 
-        // Usar el repositorio para hacer login
-        UserRepository.OperationResult result = userRepository.loginUser(username, password);
-
-        if (result.isSuccess()) {
-            // Login exitoso
-            showToast(result.getMessage());
-            navigateToWelcome();
-        } else {
-            // Error en login
-            showError(result.getMessage());
-            btnLogin.setEnabled(true);
-            btnLogin.setText(R.string.login);
-        }
+        userRepository.loginUser(username, password, result -> {
+            if (result.isSuccess()) {
+                showToast("Inicio de sesión exitoso");
+                navigateToWelcome();
+            } else {
+                String errorMessage = result.getError().getMessage();
+                showError(errorMessage != null ? errorMessage : "Error desconocido");
+                btnLogin.setEnabled(true);
+                btnLogin.setText(R.string.login);
+            }
+        });
     }
 
     private void showError(String errorMessage) {
@@ -106,7 +96,6 @@ public class LoginActivity extends BaseActivity {
     private void navigateToRegister() {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
-        // No finalizamos esta actividad para permitir volver atrás
     }
 
     private void navigateToWelcome() {
